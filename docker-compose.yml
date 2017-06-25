@@ -1,0 +1,54 @@
+version: '2'
+services:
+  hadoop:
+    container_name: hadoop
+    hostname: hadoop
+    build: ../hadoop/
+    restart: always
+    expose:
+      - "9000"
+    ports:
+      - "9000:9000"
+  hbase:
+    container_name: hbase
+    hostname: hbase
+    build: ../hbase/
+    restart: always
+    links:
+      - hadoop
+    expose:
+      - "2181"
+      - "16010"
+    ports:
+      - "2181:2181"
+      - "16010:16010"
+    environment:
+      HADOOP_HOSTNAME: hadoop
+  pinpoint-collector:
+    container_name: pinpoint-collector
+    hostname: collector
+    build: ../pinpoint-collector/
+    restart: always
+    expose:
+      - "9994"
+      - "9995"
+      - "9996"
+    ports:
+      - "9994:9994"
+      - "9995:9995/tcp"
+      - "9996:9996/tcp"
+      - "9995:9995/udp"
+      - "9996:9996/udp"
+    links:
+      - hbase
+  pinpoint-web:
+    container_name: pinpoint-web
+    hostname: web
+    build: ../pinpoint-web/
+    restart: always
+    expose:
+      - "8080"
+    ports:
+      - "3080:8080"
+    links:
+      - hbase
