@@ -9,10 +9,10 @@ RUN rm -rf /var/lib/apt/lists/*
 RUN apt-get clean && apt-get update -y && apt-get install -y openssh-server locales vim sudo net-tools telnet
 
 # SSH 관련 설정 (사용자 계정 생성 및 sudo 권한 부여)
-RUN adduser --disabled-password --gecos "" hive  \
-    && echo 'hive:gkdlqm' | chpasswd \
-    && adduser hive sudo \
-    && echo 'hive ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers \
+RUN adduser --disabled-password --gecos "" ubuntu  \
+    && echo 'ubuntu:ubuntu' | chpasswd \
+    && adduser ubuntu sudo \
+    && echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers \
     && mkdir /var/run/sshd
 
 # 시간 설정
