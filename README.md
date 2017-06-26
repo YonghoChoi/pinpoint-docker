@@ -10,10 +10,18 @@ pinpoint는 hbase를 사용하고 있는데 이 hbase를 분산형으로 구성�
 
 구동을 위해 필요한 이미지들은 제 개인 repository에 push를 해두었습니다. 기본적으로 docker-compose.yml에서는 아래의 repository 이미지를 사용합니다.
 
-* [yonghochoi/hadoop](https://hub.docker.com/r/yonghochoi/hadoop/)
-* [yonghochoi/hbase](https://hub.docker.com/r/yonghochoi/hbase/)
-* [yonghochoi/pinpoint-collector](https://hub.docker.com/r/yonghochoi/pinpoint-collector/)
-* [yonghochoi/pinpoint-web](https://hub.docker.com/r/yonghochoi/pinpoint-web/)
+* [yonghochoi/hadoop](https://hub.docker.com/r/yonghochoi/hadoop/) (버전 : 2.7.3)
+* [yonghochoi/hbase](https://hub.docker.com/r/yonghochoi/hbase/) (버전 : 1.2.6)
+* [yonghochoi/pinpoint-collector](https://hub.docker.com/r/yonghochoi/pinpoint-collector/) (버전 : 1.6.2)
+* [yonghochoi/pinpoint-web](https://hub.docker.com/r/yonghochoi/pinpoint-web/) (버전 : 1.6.2)
+
+
+
+
+pinpoint의 최신 버전은 [Release 페이지](https://github.com/naver/pinpoint/releases)를 참고하시길 바랍니다.
+
+여기서는 agent에 대한 구성은 생략하므로 [Pinpoint Agent 설치](http://dev2.prompt.co.kr/35)를 참고하여 설정하시길 바랍니다.
+
 
 
 
@@ -61,4 +69,67 @@ $ docker-compose build
 ```shell
 $ docker-compose up -d
 ```
+
+
+
+## 오류가 발생하는 경우
+
+docker-compose를 사용하여 컨테이너가 구동되는 과정에서 hbase가 완전히 준비되지 않은 상태로 pinpoint-collector 또는 pinpoint-web이 구동되면 제대로 동작되지 않는 경우가 있습니다. 
+
+이러한 경우에는 초기화를 진행 한 후 순차적으로 실행을 시켜주면 정상동작합니다. 아래와 같은 순서를 진행해보시길 바랍니다.
+
+1. Pinpoint-collector/web 종료
+
+   ```shell
+   $ docker stop pinpoint-collector
+   $ docker stop pinpoint-web
+   ```
+
+2. hbase 종료
+
+   ```shell
+   $ docker stop hbase
+   ```
+
+3. hadoop에서 hbase data 저장 디렉토리 제거
+
+   ```shell
+   $ docker exec -it hadoop hadoop fs -rmr /hbase
+   ```
+
+4. zookeeper에서 hbase znode 제거
+
+   ```shell
+   $ docker exec -it zoo1 zkCli.sh -server localhost:2181
+   [zk: localhost:2181(CONNECTED) 0] rmr /hbase
+   ```
+
+   * zookeeper 서버 한군데서만 제거하면 앙상블로 구성된 모든 서버에 동기화됨.
+
+5. hbase 구동 및 로그 확인
+
+   ```shell
+   $ docker start hbase
+   $ docker logs -f hbase
+   ```
+
+   * 테이블 생성 절차가 완료되고 정상 동작까지 로그를 확인 후 아래과정 수행
+
+6. pinpoint-collector 구동 및 로그 확인
+
+   ```shell
+   $ docker start pinpoint-collector
+   $ docker logs -f pinpoint-collector
+   ```
+
+   * Exception이 발생하지 않고 정상동작하는 지 확인
+
+7. pinpoint-web 구동 및 로그 확인
+
+   ```shell
+   $ docker start pinpoint-web
+   $ docker logs -f pinpoint-web
+   ```
+
+   * Exception이 발생하지 않고 정상동작하는 지 확인
 
