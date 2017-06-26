@@ -1,5 +1,7 @@
 # pinpoint-docker
 
+![](pinpoint.png)
+
 [Pinpoint](https://github.com/naver/pinpoint)는 대규모 분산 시스템의 성능을 분석하고 문제를 진단, 처리하는 플랫폼입니다. 네이버의 pinpoint를 clone하면 기본적으로 quickstart를 통해 단일 머신에서 간단히 pinpoint를 구동시키고 사용할 수 있습니다. 
 
 하지만 분산형으로는 구성하는 절차가 복잡하기 때문에 구성에 어려움이 있습니다. 이를 편하게 하기 위해 docker로 구성을 해보았습니다. 
@@ -76,7 +78,7 @@ $ docker-compose up -d
 
 docker-compose를 사용하여 컨테이너가 구동되는 과정에서 hbase가 완전히 준비되지 않은 상태로 pinpoint-collector 또는 pinpoint-web이 구동되면 제대로 동작되지 않는 경우가 있습니다. 
 
-이러한 경우에는 초기화를 진행 한 후 순차적으로 실행을 시켜주면 정상동작합니다. 아래와 같은 순서를 진행해보시길 바랍니다.
+이러한 경우에는 초기화를 진행 한 후 순차적으로 실행을 시켜주면 정상동작합니다. 아래와 같은 순서로 진행해보시길 바랍니다.
 
 1. Pinpoint-collector/web 종료
 
@@ -132,4 +134,12 @@ docker-compose를 사용하여 컨테이너가 구동되는 과정에서 hbase�
    ```
 
    * Exception이 발생하지 않고 정상동작하는 지 확인
+
+
+
+
+## 참고
+
+* [Pinpoint](https://github.com/naver/pinpoint)
+* [대규모 분산 시스템 추적 플랫폼, Pinpoint](http://d2.naver.com/helloworld/1194202)
 
