@@ -2,9 +2,6 @@
 
 service ssh start
 
-# zookeeper 실행
-#$ZOOKEEPER_HOME/bin/zkServer.sh start
-
 # hbase 실행
 $HBASE_HOME/bin/start-hbase.sh
 

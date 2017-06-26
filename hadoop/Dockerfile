@@ -2,6 +2,7 @@ FROM openjdk:8-jdk
 MAINTAINER Server Team <yongho1037@vinusent.com>
 
 ENV HADOOP_HOME /usr/local/hadoop
+ENV HADOOP_VERSION 2.7.3
 ENV PATH $PATH:$HADOOP_HOME/bin
 
 RUN echo 'deb http://http.debian.net/debian jessie-backports main' > /etc/apt/sources.list.d/jessie-backports.list
@@ -25,10 +26,10 @@ RUN sed -i -e 's/# ko_KR.UTF-8 UTF-8/ko_KR.UTF-8 UTF-8/' /etc/locale.gen && \
     echo 'export LANG=ko_KR.utf-8' >> /etc/bash.bashrc
 
 # pinpoint collector 다운로드
-RUN wget http://apache.tt.co.kr/hadoop/common/stable/hadoop-2.7.3.tar.gz
-RUN tar -xvf hadoop-2.7.3.tar.gz
-RUN mv hadoop-2.7.3 $HADOOP_HOME
-RUN rm hadoop-2.7.3.tar.gz
+RUN wget http://apache.tt.co.kr/hadoop/common/stable/hadoop-$HADOOP_VERSION.tar.gz
+RUN tar -xvf hadoop-$HADOOP_VERSION.tar.gz
+RUN mv hadoop-$HADOOP_VERSION $HADOOP_HOME
+RUN rm hadoop-$HADOOP_VERSION.tar.gz
 
 # 설정파일 복사
 COPY conf/hadoop-env.sh $HADOOP_HOME/etc/hadoop/hadoop-env.sh
