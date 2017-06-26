@@ -2,12 +2,13 @@ FROM openjdk:8-jdk
 MAINTAINER Server Team <yongho1037@vinusent.com>
 
 ENV HBASE_HOME /usr/local/hbase
-ENV ZOOKEEPER_HOME /usr/local/zookeeper
+#ENV ZOOKEEPER_HOME /usr/local/zookeeper
 
-ENV PATH $PATH:$HBASE_HOME/bin:$ZOOKEEPER_HOME/bin
+#ENV PATH $PATH:$HBASE_HOME/bin:$ZOOKEEPER_HOME/bin
+ENV PATH $PATH:$HBASE_HOME/bin
 
 ENV HBASE_VERSION=1.2.6
-ENV ZOOKEEPER_VERSION=3.4.10
+#ENV ZOOKEEPER_VERSION=3.4.10
 
 RUN echo 'deb http://http.debian.net/debian jessie-backports main' > /etc/apt/sources.list.d/jessie-backports.list
 RUN rm -rf /var/lib/apt/lists/*
@@ -40,15 +41,15 @@ RUN wget https://raw.githubusercontent.com/naver/pinpoint/master/hbase/scripts/h
 RUN mv hbase-create.hbase $HBASE_HOME/hbase-create.hbase
 
 # zookeeper 다운로드
-RUN wget http://mirror.navercorp.com/apache/zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz
-RUN tar -xvf zookeeper-$ZOOKEEPER_VERSION.tar.gz
-RUN mv zookeeper-$ZOOKEEPER_VERSION $ZOOKEEPER_HOME
-RUN rm zookeeper-$ZOOKEEPER_VERSION.tar.gz
+#RUN wget http://mirror.navercorp.com/apache/zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz
+#RUN tar -xvf zookeeper-$ZOOKEEPER_VERSION.tar.gz
+#RUN mv zookeeper-$ZOOKEEPER_VERSION $ZOOKEEPER_HOME
+#RUN rm zookeeper-$ZOOKEEPER_VERSION.tar.gz
 
 # 설정파일 복사
 COPY conf/hbase-env.sh $HBASE_HOME/conf/hbase-env.sh
 COPY conf/hbase-site.xml $HBASE_HOME/conf/hbase-site.xml
-COPY conf/zoo.cfg $ZOOKEEPER_HOME/conf/zoo.cfg
+#COPY conf/zoo.cfg $ZOOKEEPER_HOME/conf/zoo.cfg
 COPY start.sh /usr/local/bin/start.sh
 
 WORKDIR $HBASE_HOME

@@ -9,22 +9,59 @@ services:
       - "9000"
     ports:
       - "9000:9000"
+
   hbase:
+    depends_on:
+      - hadoop
+      - zoo1
+      - zoo2
+      - zoo3
     container_name: hbase
     hostname: hbase
     build: ../hbase/
     restart: always
     links:
       - hadoop
+      - zoo1
+      - zoo2
+      - zoo3
     expose:
-      - "2181"
       - "16010"
     ports:
-      - "2181:2181"
       - "16010:16010"
     environment:
       HADOOP_HOSTNAME: hadoop
+
+  zoo1:
+    image: zookeeper
+    restart: always
+    ports:
+        - 2181:2181
+    environment:
+        ZOO_MY_ID: 1
+        ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+
+  zoo2:
+    image: zookeeper
+    restart: always
+    ports:
+        - 2182:2181
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+
+  zoo3:
+    image: zookeeper
+    restart: always
+    ports:
+      - 2183:2181
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+
   pinpoint-collector:
+    depends_on:
+      - hbase
     container_name: pinpoint-collector
     hostname: collector
     build: ../pinpoint-collector/
@@ -41,7 +78,12 @@ services:
       - "9996:9996/udp"
     links:
       - hbase
+      - zoo1
+
   pinpoint-web:
+    depends_on:
+      - hbase
+      - pinpoint-collector
     container_name: pinpoint-web
     hostname: web
     build: ../pinpoint-web/
@@ -52,3 +94,4 @@ services:
       - "3080:8080"
     links:
       - hbase
+      - zoo1

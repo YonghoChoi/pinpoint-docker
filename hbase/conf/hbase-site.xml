@@ -35,7 +35,7 @@
         </property>
         <property>
                 <name>hbase.zookeeper.quorum</name>
-                <value>${hostname}</value>
+                <value>zoo1,zoo2,zoo3</value>
         </property>
         <property>
                 <name>dfs.replication</name>
