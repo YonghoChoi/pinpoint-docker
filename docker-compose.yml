@@ -27,12 +27,18 @@ services:
       - zoo3
     expose:
       - "16010"
+      - "16201"
+      - "16301"
     ports:
       - "16010:16010"
+      - "16201:16201"
+      - "16301:16301"
     environment:
       HADOOP_HOSTNAME: hadoop
 
   zoo1:
+    container_name: zoo1
+    hostname: zoo1
     image: zookeeper
     restart: always
     ports:
@@ -42,6 +48,8 @@ services:
         ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
 
   zoo2:
+    container_name: zoo2
+    hostname: zoo2
     image: zookeeper
     restart: always
     ports:
@@ -51,6 +59,8 @@ services:
       ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
 
   zoo3:
+    container_name: zoo3
+    hostname: zoo3
     image: zookeeper
     restart: always
     ports:
@@ -64,7 +74,7 @@ services:
       - hbase
     container_name: pinpoint-collector
     hostname: collector
-    build: ./pinpoint-collector/
+    build: pinpoint-collector
     restart: always
     expose:
       - "9994"
@@ -79,6 +89,11 @@ services:
     links:
       - hbase
       - zoo1
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://hbase:16010/table.jsp?name=TraceV2"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   pinpoint-web:
     depends_on:
@@ -86,7 +101,7 @@ services:
       - pinpoint-collector
     container_name: pinpoint-web
     hostname: web
-    build: ./pinpoint-web/
+    build: pinpoint-web
     restart: always
     expose:
       - "8080"
